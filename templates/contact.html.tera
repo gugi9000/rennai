@@ -1,0 +1,12 @@
+{% extends "base" %}
+{% block content %}
+
+<div>
+    <p>
+    For more information, please <b><a href="mailto:bjarke@gmail.com">
+    contact us</a></b> or sit tight while content appears on the site.
+    </p>
+</div>
+
+
+{% endblock content %}

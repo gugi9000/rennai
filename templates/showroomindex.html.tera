@@ -1,0 +1,35 @@
+{% extends "base" %}
+{% block content %}
+<div>
+    <h2>Conversion</h2>
+    <p class="lead">
+        Converting kilometers per hour to meters per second. And back.
+    <p class="lead">
+    <p>
+        Using self-documenting Rust code
+    </p>
+<div id="snippet" align="left">
+<pre><code>fn kmph_to_ms(kmph: f64) -&gt; f64 {
+    let meters_per_hour = kmph * 1000.0;
+    let seconds_per_hour = 60.0 * 60.0;
+    meters_per_hour / seconds_per_hour
+}
+
+fn ms_to_kmph(ms: f64) -&gt; f64 {
+    let seconds_per_hour = 60.0 * 60.0;
+    let km_per_second = ms / 1000.0;
+    km_per_second * seconds_per_hour
+}
+
+fn main() {
+    println!("{}", kmph_to_ms(18.0));
+    println!("{}", ms_to_kmph(5.0));
+}</code></pre>
+<div>
+    <p>
+        It's 5 and 18 😉
+    </p>
+</div>
+
+
+{% endblock content %}
