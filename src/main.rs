@@ -46,9 +46,10 @@ fn showroom(name: String) -> Template {
         name,
         section: String::from("showroom"),
         items: vec![
-            "<a href=\"/ip/\">/ip/</a>",
-            "<a href=\"/ip.json\">/ip.json</a>",
-            "Three",
+            "Foo",
+            "Bar",
+            "Baz",
+            "Four?",
         ],
     };
     Template::render("showroom", &context)

@@ -1,5 +1,5 @@
 [package]
-name = "rock"
+name = "rennai"
 version = "0.1.0"
 authors = ["Bjarke Sørensen <bs@wasd.dk>"]
 edition = "2018"

@@ -1,5 +1,6 @@
 {% extends "base" %}
 {% block content %}
+<div align="left">
 <h1>Showing showroom piece {{name}}</h1>
     <h3>Here are the items:</h3>
     <ul>
@@ -7,6 +8,6 @@
             <li>{{ s }}</li>
         {% endfor %}
     </ul>
-
+</div>
 
 {% endblock content %}
