@@ -6,12 +6,11 @@ extern crate rocket;
 #[macro_use]
 extern crate serde_derive;
 
-use rocket::{response::content, Request};
+use rocket::{Request};
 use rocket_contrib::templates::Template;
 use rocket_contrib::{json::Json, serve::StaticFiles};
-use std::{net::SocketAddr, path::PathBuf};
+use std::{net::SocketAddr};
 
-// use std::collections::HashMap;
 
 #[derive(Serialize)]
 struct TemplateContext {
