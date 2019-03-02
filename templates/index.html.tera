@@ -1,12 +1,13 @@
 {% extends "article.base" %}
 {% block content %}
-<h1 class="display-1" align="center">忍耐</h1>
-<h2 align="center">Rennai - here to help</h2>
+<h1 class="display-1" class="center">忍耐</h1>
 
-    <p class="lead">
-        Rennai is your first choice when in need of web application for your next great idea.</p>
-    <p class="lead">
-      <!-- a href="#" class="btn btn-lg btn-secondary">Learn more</a -->
-    </p>
+
+    <h4 class="pb-4 mb-4 font-italic border-bottom">
+            Rennai is your first choice when in need of web application for your next great idea.</p>
+    </h4>
+<p>
+  Get in touch for a great project. Tell us what you need and we'll figure out a fitting solution with you.
+</p>
 
 {% endblock content %}
