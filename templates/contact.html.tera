@@ -1,12 +1,13 @@
-{% extends "base" %}
+{% extends "article.base" %}
 {% block content %}
 
-<div>
+<div class="blog-post">
+    <h2 class="blog-post-title">Contact</h2>
+    <hr>
     <p>
     For more information, please <b><a href="mailto:bjarke@gmail.com">
     contact us</a></b> or sit tight while content appears on the site.
     </p>
 </div>
-
 
 {% endblock content %}

@@ -1,4 +1,4 @@
-{% extends "base" %}
+{% extends "article.base" %}
 {% block content %}
 <h1 class="display-1" align="center">忍耐</h1>
 <h2 align="center">Rennai - here to help</h2>

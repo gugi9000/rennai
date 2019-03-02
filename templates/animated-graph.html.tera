@@ -1,0 +1,50 @@
+    <h3 class="pb-4 mb-4 font-italic border-bottom">
+        Creating an animated graph
+    </h3>
+
+    <div class="blog-post">
+        <h2 class="blog-post-title">Animated Graph</h2>
+        <p class="blog-post-meta">March 2, 2019 by <a href="#">Bjarke</a></p>
+        <hr>
+        <p>
+            Cadavidst asked how to create a animated graph. A graph like this one: 
+        </p>
+    <iframe width="560" height="315" src="https://www.youtube.com/embed/BQovQUga0VE" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+    <p>
+        Since I had no data, I decided the grab the first example I found on the
+        <a href="https://matplotlib.org/gallery/lines_bars_and_markers/simple_plot.html">Matplotlib
+        site</a> and modified it a bit to give some animation.
+    </p>
+
+<div id="snippet" align="left">
+<pre><code>import matplotlib
+import matplotlib.pyplot as plt
+import numpy as np
+
+t = np.arange(0.0, 2.0, 0.01)
+# Here I've added a loop giving me 800 pictures:
+for z in range(100,900):
+    s = 1 + np.sin(2 * np.pi * t + z)
+
+    fig, ax = plt.subplots()
+    ax.plot(t, s)
+
+    ax.set(xlabel='time (s)', ylabel='voltage (mV)',
+           title='About as simple as it gets, folks')
+    ax.grid()
+
+    fig.savefig(f"cadavidst/pic{z}.png")
+</code></pre>
+</div>
+    <p>
+        Then we just have the string them together - I chose ffmpeg.
+    </p>
+<div id="snippet" align="left">
+<pre><code>ffmpeg  -f image2 -r 24 -start_number 100 -i 'pic%3d.png' -vcodec mpeg4 -y cadavidst.mp4
+</code></pre>
+</div>
+<p>
+ That gave me  a fine animated mpeg:
+</p>
+<iframe width="560" height="315" src="https://www.youtube.com/embed/vuChJ026gMY" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+</div>
