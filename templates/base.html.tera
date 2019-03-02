@@ -63,7 +63,7 @@
       <h3 class="masthead-brand"><a href="/">忍耐 Rennai</a></h3>
       <nav class="nav nav-masthead justify-content-center">
         <a class="nav-link {% if section == 'home' %} active{% endif %}" href="/">Home</a>
-        <a class="nav-link {% if section == 'showroom' %} active{% endif %}" href="/showroom">Showroom</a>
+        <a class="nav-link {% if section == 'article' %} active{% endif %}" href="/article">Articles</a>
         <a class="nav-link {% if section == 'contact' %} active{% endif %}" href="/contact">Contact</a>
       </nav>
     </div>

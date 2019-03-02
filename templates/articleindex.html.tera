@@ -1,0 +1,16 @@
+{% extends "base" %}
+{% block content %}
+
+<div align="left">
+<h1>{{name}}</h1>
+        <div>
+        <p><a href="article/conversion">Conversion</a> - 2019-01-15 by Bjarke</p>
+        <p><a href="article/animated-graph">Animated Graph</a> - 2019-03-02 by Bjarke</p>
+        {% for s in items %}
+        <div>
+            <p>{{ s }}</p>
+        </div>
+        {% endfor %}
+</div>
+
+{% endblock content %}

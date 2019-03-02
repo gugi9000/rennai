@@ -29,21 +29,21 @@ fn index() -> Template {
     Template::render("index", &context)
 }
 
-#[get("/showroom")]
-fn showroom_index() -> Template {
+#[get("/article")]
+fn article_index() -> Template {
     let context = TemplateContext {
-        name: String::from("Showroom"),
-        section: String::from("showroom"),
+        name: String::from("Articles"),
+        section: String::from("article"),
         items: vec!["One", "Two", "Three"],
     };
-    Template::render("showroomindex", &context)
+    Template::render("articleindex", &context)
 }
 
-#[get("/showroom/<name>")]
-fn showroom(name: String) -> Template {
+#[get("/article/<name>")]
+fn article(name: String) -> Template {
     let context = TemplateContext {
         name,
-        section: String::from("showroom"),
+        section: String::from("article"),
         items: vec![
             "Foo",
             "Bar",
@@ -51,7 +51,7 @@ fn showroom(name: String) -> Template {
             "Four?",
         ],
     };
-    Template::render("showroom", &context)
+    Template::render("article", &context)
 }
 
 #[get("/contact")]
@@ -85,7 +85,7 @@ fn rocket() -> rocket::Rocket {
         .mount("/static", StaticFiles::from("static"))
         .mount(
             "/",
-            routes![index, showroom_index, showroom, ip, ip_json, contact],
+            routes![index, article_index, article, ip, ip_json, contact],
         )
         .attach(Template::fairing())
         .register(catchers![not_found])
