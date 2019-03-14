@@ -1,0 +1,2 @@
+CREATE TABLE registrations
+(name text, temp real, date text, sensor_date text);

@@ -1,0 +1,15 @@
+{% extends "article.base" %}
+{% block content %}
+<h3 class="pb-4 mb-4 font-italic border-bottom">
+    {{ intro }}
+</h3>
+
+    <div class="blog-post">
+        <h2 class="blog-post-title">{{ name }}</h2>
+        <hr>
+        <p>{{ now() | date(format="%Y-%m-%d %H:%M") }}</p>
+        {{ contents }}
+
+    </div>
+
+{% endblock content %}
