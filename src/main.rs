@@ -17,7 +17,7 @@ use std::fs::File;
 use std::net::SocketAddr;
 use std::sync::Mutex;
 
-use chrono::{Datelike, Utc};
+use chrono::{Datelike, Timelike, Utc};
 
 type DbConn = Mutex<Connection>;
 
@@ -130,12 +130,26 @@ fn today() -> String {
     format!("{}-{:02}-{:02}", year, now.month(), now.day(),)
 }
 
+fn now_24h_ago() -> String {
+    let now = Utc::now();
+    let (_, year) = now.year_ce();
+    format!(
+        "{}-{:02}-{:02} {:02}:{:02}:{:02}",
+        year,
+        now.month(),
+        now.day() - 1,
+        now.hour(),
+        now.minute(),
+        now.second(),
+    )
+}
+
 #[get("/data/temps.json")]
 fn load_temps(db_conn: State<DbConn>) -> Result<Json<Vec<HueTemp>>, Error> {
     // let date = "2019-03-10%";
     let query = format!(
-        "SELECT name, temp, date FROM registrations where date LIKE '{}%'",
-        today()
+        "SELECT name, temp, date FROM registrations where date > '{}'",
+        now_24h_ago()
     );
 
     Ok(Json(
