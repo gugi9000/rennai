@@ -148,7 +148,7 @@ fn now_24h_ago() -> String {
 fn load_temps(db_conn: State<DbConn>) -> Result<Json<Vec<HueTemp>>, Error> {
     // let date = "2019-03-10%";
     let query = format!(
-        "SELECT name, temp, date FROM registrations where date > '{}'",
+        "SELECT name, temp, date FROM registrations where date > '{}' ORDER BY date, name",
         now_24h_ago()
     );
 
