@@ -12,7 +12,9 @@ serde_json = "1.0"
 spongedown = "0.3.2"
 chrono = "0.4.6"
 tsv = "0.1.1"
+reflection_derive = "0.1.1"
 reflection = "0.1.3"
+
 
 [dependencies.rusqlite]
 version = "0.16.0"

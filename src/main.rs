@@ -6,6 +6,10 @@ extern crate rocket;
 #[macro_use]
 extern crate serde_derive;
 
+#[macro_use]
+extern crate reflection_derive;
+
+use reflection::Reflection;
 use rocket::Request;
 use rocket::State;
 use rocket_contrib::templates::Template;
@@ -24,13 +28,22 @@ use chrono::{Datelike, Timelike, Utc};
 
 type DbConn = Mutex<Connection>;
 type TempsMap = HashMap<(String, String), f64>;
-type Map = HashMap<String, u32>;
 
 #[derive(Serialize)]
 struct TemplateContext {
     name: String,
     section: String,
     items: Vec<&'static str>,
+}
+
+#[derive(Serialize, Deserialize, Reflection)]
+struct HueTemps {
+    #[serde(rename = "sensor")]
+    sensor: Vec<String>,
+    #[serde(rename = "temperature")]
+    temperature: Vec<f64>,
+    #[serde(rename = "date")]
+    date: Vec<String>,
 }
 
 #[derive(Debug, Hash, Serialize, PartialEq)]
@@ -190,12 +203,8 @@ fn temps_tsv(db_conn: State<DbConn>) -> String {
         .filter_map(Result::ok)
         .collect();
 
-    let str_repr = tsv::ser::to_string(&tempsmap, tsv::Config::default());
-
-    match str_repr {
-        Ok(str_repr) => str_repr,
-        _ => "Failed to load data.".to_owned(),
-    }
+    tsv::ser::to_string(&tempsmap, tsv::Config::default())
+        .unwrap_or_else(|_| "Failed to load data.".to_owned())
 }
 
 #[get("/ip")]

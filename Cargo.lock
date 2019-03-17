@@ -915,6 +915,7 @@ version = "0.1.0"
 dependencies = [
  "chrono 0.4.6 (registry+https://github.com/rust-lang/crates.io-index)",
  "reflection 0.1.3 (registry+https://github.com/rust-lang/crates.io-index)",
+ "reflection_derive 0.1.1 (registry+https://github.com/rust-lang/crates.io-index)",
  "rocket 0.4.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "rocket_contrib 0.4.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "rusqlite 0.16.0 (registry+https://github.com/rust-lang/crates.io-index)",
