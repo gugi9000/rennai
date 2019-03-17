@@ -189,8 +189,9 @@ fn temps_tsv(db_conn: State<DbConn>) -> String {
         .unwrap()
         .filter_map(Result::ok)
         .collect();
-    // dbg!(&tempsmap);
+
     let str_repr = tsv::ser::to_string(&tempsmap, tsv::Config::default());
+
     match str_repr {
         Ok(str_repr) => str_repr,
         _ => "Failed to load data.".to_owned(),
@@ -209,8 +210,10 @@ fn ip_json(addr: SocketAddr) -> Json<String> {
 }
 
 #[catch(404)]
-fn not_found(req: &Request) -> String {
-    format!("Sorry, '{}' is not a valid path.", req.uri())
+fn not_found(req: &Request) -> Template {
+    let mut map = HashMap::new();
+    map.insert("path", req.uri().path());
+    Template::render("error/404", &map)
 }
 
 fn rocket() -> rocket::Rocket {
