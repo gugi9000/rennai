@@ -12,14 +12,19 @@ use rocket_contrib::templates::Template;
 use rocket_contrib::{json::Json, serve::StaticFiles};
 use rusqlite::{Connection, Error, NO_PARAMS};
 use spongedown;
+use std::collections::HashMap;
+use std::convert::From;
 use std::fs;
 use std::fs::File;
 use std::net::SocketAddr;
 use std::sync::Mutex;
+use tsv;
 
 use chrono::{Datelike, Timelike, Utc};
 
 type DbConn = Mutex<Connection>;
+type TempsMap = HashMap<(String, String), f64>;
+type Map = HashMap<String, u32>;
 
 #[derive(Serialize)]
 struct TemplateContext {
@@ -28,10 +33,10 @@ struct TemplateContext {
     items: Vec<&'static str>,
 }
 
-#[derive(Debug, Serialize, PartialEq)]
+#[derive(Debug, Hash, Serialize, PartialEq)]
 struct HueTemp {
     sensor: String,
-    temperature: f64,
+    temperature: String,
     date: String,
 }
 
@@ -145,8 +150,7 @@ fn now_24h_ago() -> String {
 }
 
 #[get("/data/temps.json")]
-fn load_temps(db_conn: State<DbConn>) -> Result<Json<Vec<HueTemp>>, Error> {
-    // let date = "2019-03-10%";
+fn temps_json(db_conn: State<DbConn>) -> Result<Json<Vec<HueTemp>>, Error> {
     let query = format!(
         "SELECT name, temp, date FROM registrations where date > '{}' ORDER BY date, name",
         now_24h_ago()
@@ -165,6 +169,32 @@ fn load_temps(db_conn: State<DbConn>) -> Result<Json<Vec<HueTemp>>, Error> {
             .filter_map(Result::ok)
             .collect(),
     ))
+}
+
+#[get("/data/temps.tsv")]
+fn temps_tsv(db_conn: State<DbConn>) -> String {
+    let query = format!(
+        "SELECT name, temp, date FROM registrations where date > '{}' ORDER BY date, name",
+        now_24h_ago()
+    );
+
+    let tempsmap: TempsMap;
+
+    tempsmap = db_conn
+        .lock()
+        .expect("db connection lock")
+        .prepare(&query)
+        .unwrap()
+        .query_map(NO_PARAMS, |row| ((row.get(0), row.get(2)), row.get(1)))
+        .unwrap()
+        .filter_map(Result::ok)
+        .collect();
+    // dbg!(&tempsmap);
+    let str_repr = tsv::ser::to_string(&tempsmap, tsv::Config::default());
+    match str_repr {
+        Ok(str_repr) => str_repr,
+        _ => "Failed to load data.".to_owned(),
+    }
 }
 
 #[get("/ip")]
@@ -206,7 +236,8 @@ fn rocket() -> rocket::Rocket {
                 ip,
                 ip_json,
                 contact,
-                load_temps
+                temps_json,
+                temps_tsv,
             ],
         )
         .attach(Template::fairing())
