@@ -8,7 +8,7 @@
         <h2 class="blog-post-title">{{ name }}</h2>
         <hr>
         <p>{{ now() | date(format="%Y-%m-%d %H:%M") }}</p>
-        {{ contents }}
+        {{ contents |safe}}
 
     </div>
 
