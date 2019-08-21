@@ -6,20 +6,28 @@ extern crate rocket;
 #[macro_use]
 extern crate serde_derive;
 
+#[macro_use]
+extern crate reflection_derive;
+
+use reflection::Reflection;
 use rocket::Request;
 use rocket::State;
 use rocket_contrib::templates::Template;
 use rocket_contrib::{json::Json, serve::StaticFiles};
 use rusqlite::{Connection, Error, NO_PARAMS};
 use spongedown;
+use std::collections::HashMap;
+use std::convert::From;
 use std::fs;
 use std::fs::File;
 use std::net::SocketAddr;
 use std::sync::Mutex;
+use tsv;
 
 use chrono::{Datelike, Timelike, Utc};
 
 type DbConn = Mutex<Connection>;
+type TempsMap = HashMap<(String, String), f64>;
 
 #[derive(Serialize)]
 struct TemplateContext {
@@ -28,10 +36,20 @@ struct TemplateContext {
     items: Vec<&'static str>,
 }
 
-#[derive(Debug, Serialize, PartialEq)]
+#[derive(Serialize, Deserialize, Reflection)]
+struct HueTemps {
+    #[serde(rename = "sensor")]
+    sensor: Vec<String>,
+    #[serde(rename = "temperature")]
+    temperature: Vec<f64>,
+    #[serde(rename = "date")]
+    date: Vec<String>,
+}
+
+#[derive(Debug, Hash, Serialize, PartialEq)]
 struct HueTemp {
     sensor: String,
-    temperature: f64,
+    temperature: String,
     date: String,
 }
 
@@ -145,10 +163,9 @@ fn now_24h_ago() -> String {
 }
 
 #[get("/data/temps.json")]
-fn load_temps(db_conn: State<DbConn>) -> Result<Json<Vec<HueTemp>>, Error> {
-    // let date = "2019-03-10%";
+fn temps_json(db_conn: State<DbConn>) -> Result<Json<Vec<HueTemp>>, Error> {
     let query = format!(
-        "SELECT name, temp, date FROM registrations where date > '{}'",
+        "SELECT name, temp, date FROM registrations where date > '{}' ORDER BY date, name",
         now_24h_ago()
     );
 
@@ -167,6 +184,29 @@ fn load_temps(db_conn: State<DbConn>) -> Result<Json<Vec<HueTemp>>, Error> {
     ))
 }
 
+#[get("/data/temps.tsv")]
+fn temps_tsv(db_conn: State<DbConn>) -> String {
+    let query = format!(
+        "SELECT name, temp, date FROM registrations where date > '{}' ORDER BY date, name",
+        now_24h_ago()
+    );
+
+    let tempsmap: TempsMap;
+
+    tempsmap = db_conn
+        .lock()
+        .expect("db connection lock")
+        .prepare(&query)
+        .unwrap()
+        .query_map(NO_PARAMS, |row| ((row.get(0), row.get(2)), row.get(1)))
+        .unwrap()
+        .filter_map(Result::ok)
+        .collect();
+
+    tsv::ser::to_string(&tempsmap, tsv::Config::default())
+        .unwrap_or_else(|_| "Failed to load data.".to_owned())
+}
+
 #[get("/ip")]
 fn ip(addr: SocketAddr) -> String {
     format!("{}\n", addr.ip())
@@ -179,8 +219,10 @@ fn ip_json(addr: SocketAddr) -> Json<String> {
 }
 
 #[catch(404)]
-fn not_found(req: &Request) -> String {
-    format!("Sorry, '{}' is not a valid path.", req.uri())
+fn not_found(req: &Request) -> Template {
+    let mut map = HashMap::new();
+    map.insert("path", req.uri().path());
+    Template::render("error/404", &map)
 }
 
 fn rocket() -> rocket::Rocket {
@@ -206,7 +248,8 @@ fn rocket() -> rocket::Rocket {
                 ip,
                 ip_json,
                 contact,
-                load_temps
+                temps_json,
+                temps_tsv,
             ],
         )
         .attach(Template::fairing())

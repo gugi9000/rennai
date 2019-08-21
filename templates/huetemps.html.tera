@@ -1,0 +1,14 @@
+      <h3 class="pb-4 mb-4 font-italic border-bottom">
+        A line graph over temperatures inside and out
+      </h3>
+
+      <div class="blog-post">
+        <h2 class="blog-post-title">Hue temperatures</h2>
+        <p class="blog-post-meta">March 18, 2019 by <a href="#">Bjarke</a></p>
+        <hr>
+        <div id="view"></div>
+        <p>
+        It's fake.
+        </p>
+      </div>
+
